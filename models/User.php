@@ -22,6 +22,18 @@ final class User
         return is_array($user) ? $user : null;
     }
 
+    /**
+     * Crea la cuenta del administrador la primera vez, con la contraseña configurada.
+     */
+    public function ensureExists(string $email, string $plainPassword): void
+    {
+        if ($plainPassword === '' || $this->findByEmail($email) !== null) {
+            return;
+        }
+
+        $this->create($email, password_hash($plainPassword, PASSWORD_DEFAULT));
+    }
+
     public function create(string $email, string $passwordHash): int
     {
         $statement = $this->pdo->prepare(

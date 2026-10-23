@@ -1,7 +1,9 @@
 <section class="card">
-    <p class="eyebrow">Acceso a tu cuenta</p>
-    <h1>Recuperar contraseña</h1>
-    <p class="muted">Te enviaremos un enlace si el correo está registrado.</p>
+    <header class="card-head">
+        <p class="eyebrow">Acceso a tu cuenta</p>
+        <h1>Recuperar contraseña</h1>
+        <p class="muted">Te enviaremos un enlace si el correo está registrado.</p>
+    </header>
 
     <form method="post" action="index.php?route=recover">
         <input type="hidden" name="csrf_token" value="<?= h(csrf_token()) ?>">

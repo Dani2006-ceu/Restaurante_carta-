@@ -30,9 +30,9 @@ final class PasswordRecoveryController
         if ($user !== null) {
             $token = $this->resetTokens->issue((int) $user['id']);
             $resetUrl = app_url(['route' => 'reset-password', 'token' => $token]);
-            $from = getenv('APP_MAIL_FROM');
+            $from = env_value('APP_MAIL_FROM');
 
-            if (is_string($from) && filter_var($from, FILTER_VALIDATE_EMAIL)) {
+            if (filter_var($from, FILTER_VALIDATE_EMAIL)) {
                 $subject = 'Recuperación de contraseña';
                 $body = "Para cambiar tu contraseña, abre este enlace (válido por una hora):\n\n"
                     . $resetUrl . "\n";

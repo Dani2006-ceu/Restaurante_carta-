@@ -47,22 +47,13 @@ final class LoginController
 
     public function home(): void
     {
-        if (!isset($_SESSION['user_id'], $_SESSION['user_email'])) {
-            redirect('login');
-        }
-
+        require_login();
         render('home', 'Inicio');
     }
 
     public function logout(string $method): void
     {
-        if ($method !== 'POST') {
-            http_response_code(405);
-            header('Allow: POST');
-            render('errors/405', 'Método no permitido');
-            return;
-        }
-
+        require_post($method);
         require_valid_csrf();
         $_SESSION = [];
 

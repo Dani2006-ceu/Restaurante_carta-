@@ -11,11 +11,11 @@ final class Database
             return self::$connection;
         }
 
-        $host = self::environment('APP_DB_HOST', '127.0.0.1');
-        $port = self::environment('APP_DB_PORT', '3306');
-        $database = self::environment('APP_DB_NAME', 'loginb_db');
-        $username = self::environment('APP_DB_USER', 'root');
-        $password = self::environment('APP_DB_PASSWORD', '');
+        $host = env_value('APP_DB_HOST', '127.0.0.1');
+        $port = env_value('APP_DB_PORT', '3306');
+        $database = env_value('APP_DB_NAME', 'loginb_db');
+        $username = env_value('APP_DB_USER', 'root');
+        $password = env_value('APP_DB_PASSWORD', '');
         $schemaPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'db'
             . DIRECTORY_SEPARATOR . 'schema.sql';
 
@@ -56,6 +56,23 @@ final class Database
         }
 
         self::$connection->exec('SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci');
+        self::installSchema($schemaPath);
+
+        return self::$connection;
+    }
+
+    /**
+     * Crea las tablas solo cuando db/schema.sql cambia, no en cada petición.
+     * La versión aplicada se guarda en db/.schema-version.
+     */
+    private static function installSchema(string $schemaPath): void
+    {
+        $markerPath = dirname($schemaPath) . DIRECTORY_SEPARATOR . '.schema-version';
+        $version = filemtime($schemaPath) . '-' . filesize($schemaPath);
+        if (is_file($markerPath) && file_get_contents($markerPath) === $version) {
+            return;
+        }
+
         $schema = file_get_contents($schemaPath);
         if (!is_string($schema)) {
             throw new RuntimeException('No se pudo leer db/schema.sql.');
@@ -66,14 +83,6 @@ final class Database
                 self::$connection->exec($statement);
             }
         }
-
-        return self::$connection;
-    }
-
-    private static function environment(string $name, string $default): string
-    {
-        $value = getenv($name);
-
-        return is_string($value) && $value !== '' ? $value : $default;
+        @file_put_contents($markerPath, $version);
     }
 }

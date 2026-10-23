@@ -1,6 +1,8 @@
 <section class="card">
-    <p class="eyebrow">Acceso a tu cuenta</p>
-    <h1>Cambiar contraseña</h1>
+    <header class="card-head">
+        <p class="eyebrow">Acceso a tu cuenta</p>
+        <h1>Cambiar contraseña</h1>
+    </header>
 
     <?php if (isset($error)): ?>
         <div class="notice notice-error" role="alert"><?= h($error) ?></div>

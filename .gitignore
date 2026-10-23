@@ -2,3 +2,12 @@
 /db/*.db-journal
 /db/*.db-shm
 /db/*.db-wal
+/db/.schema-version
+
+# Credenciales locales / del hosting
+/config/env.php
+/config/env.infinityfree.php
+/credenciales.txt
+
+# Fotos subidas por los usuarios
+/uploads/menu/

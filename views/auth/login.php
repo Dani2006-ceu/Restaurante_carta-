@@ -1,7 +1,9 @@
 <section class="card">
-    <p class="eyebrow">Bienvenido</p>
-    <h1>Iniciar sesión</h1>
-    <p class="muted">Ingresa tus datos para continuar.</p>
+    <header class="card-head">
+        <p class="eyebrow">Bienvenido</p>
+        <h1>Iniciar sesión</h1>
+        <p class="muted">Ingresa tus datos para continuar.</p>
+    </header>
 
     <?php if (isset($error)): ?>
         <div class="notice notice-error" role="alert"><?= h($error) ?></div>

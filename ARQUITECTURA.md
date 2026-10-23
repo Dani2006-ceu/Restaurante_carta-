@@ -64,6 +64,38 @@ El flujo genera un token aleatorio de un solo uso, guarda únicamente su hash y 
 
 La respuesta de recuperación es genérica para no revelar si un correo está registrado. Los errores de entrega quedan en el log de PHP/Apache. Usa un proveedor SMTP confiable antes de desplegar en producción.
 
+## Menú digital del restaurante
+
+- `index.php` (ruta `inicio`) es la página pública de presentación; arriba tiene el botón **Iniciar sesión**.
+- Solo el administrador (`APP_ADMIN_EMAIL`, por defecto `admindash@gmail.com`) autoriza usuarios nuevos: el formulario de registro pide su correo y contraseña. La cuenta del administrador se crea sola con `APP_ADMIN_PASSWORD` si todavía no existe.
+- Con sesión iniciada: **Mi menú** (`menu`) para agregar productos (categoría, nombre, descripción, foto por link, precio, descuento, disponible), datos del restaurante y **Generar link** con QR; **Pedidos** (`pedidos`) muestra lo que piden los clientes y avisa con sonido.
+- Los clientes abren `index.php?route=carta&m=<token>` desde el link o el QR: solo ven el menú (pensado para celular) y el botón **Pedir**. Generar un link nuevo invalida el anterior.
+- Tablas: `restaurants`, `menu_items`, `orders` y `order_items` en `db/schema.sql`.
+- Cuando llega un pedido suena un timbre en el panel (botón **🔔 Sonido** para activarlo/desactivarlo) y, si el panel está en otra pestaña, aparece una notificación del sistema.
+- Diseño: `assets/app.css` (sitio y panel, tonos espresso/crema/dorado/vino), `assets/carta.css` (menú del cliente en papel crema) y `assets/fondo.js` (brasas doradas). Logo en `assets/img/`.
+
+### Descargar como app (PWA)
+
+- El panel y el menú del cliente se pueden instalar en el celular o la computadora (botones **Descargar app** y **Guardar en el celular**). En iPhone se instala desde Compartir → *Agregar a pantalla de inicio*.
+- `sw.js` guarda el diseño y el último menú visto para abrirlo sin conexión; el panel y los pedidos siempre usan la red.
+- El cliente también puede **Descargar PDF** del menú (usa el diálogo de impresión del navegador).
+- Instalar requiere **HTTPS** (o `localhost`). En InfinityFree activa el certificado SSL gratuito de tu dominio.
+
+### QR desde XAMPP
+
+El link del menú usa la dirección con la que abres el panel. Con `localhost` no abre desde el celular: el panel muestra la dirección de tu PC en la red (por ejemplo `http://192.168.0.113/...`); ábrelo desde ahí con el celular en el mismo Wi-Fi. Si no carga, permite Apache en el Firewall de Windows.
+
+## Subir a InfinityFree
+
+1. En el panel de InfinityFree crea la base de datos en **MySQL Databases** y anota *MySQL Hostname*, *DB Name*, *Username* y la contraseña de la cuenta (vPanel).
+2. Copia `config/env.example.php` como `config/env.php` y pon esos datos, el correo y la contraseña del administrador.
+3. Sube **todo el contenido** de esta carpeta (no la carpeta en sí) dentro de `htdocs` con FileZilla o el *Online File Manager*, incluidos los `.htaccess`. No hace falta subir `.git`.
+4. (Opcional) En phpMyAdmin importa `db/schema.sql`; si no, las tablas se crean solas en la primera visita.
+5. En el panel de InfinityFree activa **SSL** (certificado gratuito) para que funcionen la instalación como app y el QR con `https://`.
+6. Abre tu dominio, pulsa **Iniciar sesión** y entra con la cuenta del administrador.
+
+InfinityFree no permite `mail()`, así que la recuperación de contraseña por correo no envía mensajes allí.
+
 ## Seguridad incluida en esta base
 
 - Hash de contraseñas con `password_hash()` y verificación con `password_verify()`.
